@@ -100,11 +100,19 @@ src_compile() {
 	cygmake man
 	cygmake info
 	cygmake pdf
+
+	# build git subtree
+	cd ${B}/contrib/subtree
+	cygmake all
 }
 
 src_install() {
 	cd ${B}
 	cyginstall install-html install-man install-info install-pdf pdfdir=/usr/share/doc/git
+
+	# ship git subtree
+	cd ${B}/contrib/subtree
+	cyginstall install install-doc
 
 	# ship bash completion
 	insinto /etc/bash_completion.d
@@ -118,6 +126,11 @@ src_test() {
 	cp ${S}/t/t4018/* ${B}/t/t4018
 	cd ${B}
 	GIT_SKIP_TESTS=$skip_tests GIT_TEST_OPTS=--tee cygtest
+
+	# test git subtree
+	cd ${B}/contrib/subtree
+	ln -s git-subtree ../../
+	cygtest
 }
 
 # Local Variables:
